@@ -3,10 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.104.2">
-    <title>Checkout example · Bootstrap v5.2</title>
+    <meta name="description" content="Proyecto de curso de autómatas y lenguajes formales 2024">
+    <meta name="author" content="Bryan Gerardo Ascuc de Paz">
+    <title>Proyecto Autómatas</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/checkout/">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
@@ -69,7 +68,30 @@
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
       }
-      
+      /* Limita la altura total del contenedor y habilita scroll solo en el cuerpo de la tabla */
+      .table-container {
+        max-height: 300px; /* Altura fija del área de tabla */
+        overflow-y: auto;
+        border: 1px solid #dee2e6; /* Opcional: borde para que resalte */
+      }
+
+      /* Fija el encabezado de la tabla */
+      .table-header th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa; /* Color del encabezado */
+        z-index: 10; /* Asegura que el encabezado se superponga al contenido */
+        border-bottom: 2px solid #dee2e6;
+      }
+
+      /* Ajusta el ancho de las columnas para evitar desajustes */
+      .table {
+        width: 100%;
+        table-layout: fixed;
+      }
+      .bold-label {
+        font-weight: bold;
+      }
     </style>
 
     
@@ -110,80 +132,89 @@
           <div class="row g-3">
             <div class="col-sm-12">
               <div class="input-group mb-3">
-                <input type="file" class="form-control" id="archivo">
+                <input type="file" class="form-control" id="archivo" style="font-weight:bold;">
                 <label class="input-group-text" for="archivo"><i class ="fas fa-file"></i></label>
               </div>
             </div>
           </div>
           <hr class="my-2">
-          <button id="btn-ejecutar" class="w-100 btn btn-success btn-lg"   type="submit" disabled>Ejecutar</button>
+          <button id="btn-ejecutar" class="w-100 btn btn-success btn-lg" style="font-weight: bold;"   type="submit" disabled><i class="fas fa-play"></i> &nbsp;Ejecutar</button>
         </form>
       </div>
-      <div class="mb-3">
-        <label id="txttitle" for="txt-content" class="form-label"></label>
-        <textarea class="form-control" id="txt-content" rows="4"></textarea>
+      <div class="mb-3" id="txt" style="display:none">
+        <label id="txttitle" for="txt-content" class="form-label bold-label"></label>
+        <textarea class="form-control" id="txt-content" style="font-weight: bold;" rows="5" disabled></textarea>
       </div>
       <hr class="my-0">
-      <div class="col-sm-2" id="vectorQ">
-        <label for="vectorQ" class="form-label">Vectores</label>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col" class="table-active"> Q</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyQ">
-
-          </tbody>
-        </table>
+      <div class="col-sm-2" id="vectorQ" style="display:none;margin-top: 0;">
+        <label for="vectorQ" class="form-label bold-label">Vectores</label>
+        <div class="table-container">
+          <table class="table">
+            <thead class="table-header">
+              <tr>
+                <th scope="col" class="table-active"> Q</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyQ">
+  
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="col-sm-2" id="vectorE">
+      <div class="col-sm-2" id="vectorE" style="display:none;margin-top: 0;">
         <label for="vectorE" class="form-label">&nbsp;</label>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col" class="table-active"> Σ</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyZ">
-
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table class="table">
+            <thead class="table-header">
+              <tr>
+                <th scope="col" class="table-active"> Σ</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyZ">
+  
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="col-sm-2" id="vectorA">
+      <div class="col-sm-2" id="vectorA" style="display:none;margin-top: 0;">
         <label for="vectorA" class="form-label">&nbsp;</label>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col" class="table-active"> A</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyA">
-
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table class="table">
+            <thead class="table-header">
+              <tr>
+                <th scope="col" class="table-active"> A</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyA">
+  
+            </tbody>
+          </table>
+        </div>
       </div>            
 
-      <div class="col-sm-6" id="matriz">
-        <label for="firstName" class="form-label">Matriz</label>
+      <div class="col-sm-6" id="matriz" style="display:none;max-height: 400px; overflow: hidden;margin-top: 0;">
+        <label for="firstName" class="form-label bold-label">Matriz</label>
+        <div class="table-container">
           <table class="table">
-          <thead>
-            <tr id="alfabeto">
-              <th scope="col" class="table-active"> Estado</th>
-              <!-- <th scope="col" class="table-active"> a</th>
-              <th scope="col" class="table-active"> b</th>
-              <th scope="col" class="table-active"> b1</th> -->
-            </tr>
-          </thead>
-          <tbody id="matrix">
-          </tbody>
-        </table>
+            <thead class="table-header">
+              <tr id="alfabeto">
+                <th scope="col" class="table-active"> Estado</th>
+              </tr>
+            </thead>
+            <tbody id="matrix">
+            </tbody>
+          </table>
         </div>
+        </div>
+    </div>
+     <hr>
+    <div class="col-md-12 col-lg-12" id="reset" style="display:none">
+        <button  class="w-100 btn btn-outline-primary btn-lg" style="font-weight: bold;"   onclick="window.location.reload()"><i class="fas fa-sync-alt"> &nbsp;</i>Reiniciar input</button>
     </div>
   </main>
 
-  <footer class="my-5 pt-5 text-muted text-center text-small">
-    <p class="mb-1">&copy; 2024 Bryger</p>
+  <footer class="my-3 text-muted text-center text-small">
+    <p class="mb-1 bold-label">&copy; 2024 Bryger</p>
   </footer>
 </div>
 

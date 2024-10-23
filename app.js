@@ -5,6 +5,12 @@ const btnEjecutar = document.getElementById('btn-ejecutar');
 const txtContent = document.getElementById('txt-content');
 const txtTitle = document.getElementById('txttitle'); 
 const tbodyA = document.getElementById('tbodyA');
+const vectorQ = document.getElementById('vectorQ');
+const vectorA = document.getElementById('vectorA');
+const vectorE = document.getElementById('vectorE');
+const txt = document.getElementById('txt');
+const btnReset = document.getElementById('reset');
+const matrizTransicion = document.getElementById('matriz');
 let title = '';
 
 // Detecta si se selecciona un archivo
@@ -52,16 +58,18 @@ btnEjecutar.addEventListener('click', function () {
     let tQ = Q.length;
     let tZ = Z.length;
     let max_vector_row = Math.max(tA,tQ,tZ);
-    // console.log(max_vector_row);
-    // console.log("Q:", Q);
-    // console.log("Z:", Z);
-    // console.log("i:", i);
     agregarFilasVector(A,'tbodyA',max_vector_row);
     agregarFilasVector(Q,'tbodyQ',max_vector_row);
     agregarFilasVector(Z,'tbodyZ',max_vector_row);
     agregarAlfabetoMatriz(Z,'alfabeto');
     // console.log("W:", W);
     imprimirMatriz(Q,Z,W);
+    vectorA.style.display='block';
+    vectorQ.style.display='block';
+    vectorE.style.display='block';
+    txt.style.display='block';
+    btnReset.style.display='block';
+    matrizTransicion.style.display='block';
   };
 
   lector.readAsText(archivo); 
@@ -134,9 +142,9 @@ function imprimirMatriz(estados,alfabeto,transiciones){
     th1.setAttribute('scope', 'row');
     th1.textContent = estados[i];
     tr.appendChild(th1);
-    console.log(estados[i]);
+    //console.log(estados[i]);
     for (let j = 0; j < alfabeto.length; j++) {
-      console.log(alfabeto[j]);
+      //console.log(alfabeto[j]);
       let transition ='';
       transiciones.forEach(e => {
         let [current_status, element, next_status] = e.replace(/[()]/g, '').split(',');              
@@ -149,13 +157,13 @@ function imprimirMatriz(estados,alfabeto,transiciones){
       });
       if(transition != ''){
         let jointransition = transition.split('').sort().join(',');
-        console.log("Transición"+estados[i]+", "+alfabeto[j]+": "+jointransition);
+        //console.log("Transición"+estados[i]+", "+alfabeto[j]+": "+jointransition);
         let th1 = document.createElement('th');
         th1.setAttribute('scope', 'row');
         th1.textContent = jointransition;
         tr.appendChild(th1);
       }else{
-        console.log("Transición"+estados[i]+", "+alfabeto[j]+": Espacio vacío");        
+        //console.log("Transición"+estados[i]+", "+alfabeto[j]+": Espacio vacío");        
         let th1 = document.createElement('th');
         th1.setAttribute('scope', 'row');
         th1.textContent = '\u00A0';
