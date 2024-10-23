@@ -4,6 +4,7 @@ const inputArchivo = document.getElementById('archivo');
 const btnEjecutar = document.getElementById('btn-ejecutar');
 const txtContent = document.getElementById('txt-content');
 const txtTitle = document.getElementById('txttitle'); 
+const tbodyA = document.getElementById('tbodyA');
 let title = '';
 
 // Detecta si se selecciona un archivo
@@ -41,23 +42,22 @@ btnEjecutar.addEventListener('click', function () {
     const WLINE = lines[4];
 
     const Q = await LIMPIARCOMA(QLINE);
-    console.log("Obj de Q:"+Q);
     const Z = await LIMPIARCOMA(ZLINE);
-    console.log("Obj de Z "+Z);
     const arri = iLINE.split('=');
     const i = arri[1].trim();
     const A = await LIMPIARCOMA(ALINE);
-    console.log("Obj de A "+A);
     const W = await LIMPIARW(WLINE);
-    console.log("Obj de W: "+W);
-
+    console.log(A,Q,Z);
+    //max_vector_row = Math.max(Q.length(),Z.length(),*/A.length);
     console.log("Q:", Q);
     console.log("Z:", Z);
     console.log("i:", i);
-    console.log("A:", A);
+    agregarFilasVector(A,'tbodyA');
+    agregarFilasVector(Q,'tbodyQ');
+    agregarFilasVector(Z,'tbodyZ');
+    agregarAlfabeto(Z,'alfabeto');
     console.log("W:", W);
 
-    console.log(txtContent.value);
   };
 
   lector.readAsText(archivo); 
@@ -84,4 +84,34 @@ async function LIMPIARW(str) {
   } else {
     return [];
   }
+}
+
+
+function agregarFilasVector(vector, tbodyV) {
+  // Obtener referencia al tbody
+  //console.log("A: "+A);
+  const tbody = document.getElementById(tbodyV);
+  for (let i = 0; i < vector.length; i++) {
+    let tr1 = document.createElement('tr');
+    let th1 = document.createElement('th');
+    th1.setAttribute('scope', 'row');
+    th1.textContent = vector[i];
+    tr1.appendChild(th1);
+    tbody.appendChild(tr1);
+  }
+}
+
+function agregarAlfabeto(alfabeto, trA) {
+  // Obtener referencia al tbody
+  //console.log("A: "+A);
+  const tr = document.getElementById(trA);
+  for (let i = 0; i < alfabeto.length; i++) {
+    let th1 = document.createElement('th');
+    th1.setAttribute('scope', 'row');
+    th1.setAttribute('class','table-active')
+    th1.textContent = alfabeto[i];
+    tr.appendChild(th1);
+    // tr.appendChild(tr1);
+  }
+
 }
