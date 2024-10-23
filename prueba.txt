@@ -1,5 +1,0 @@
-Q = {A,B}
-Z = {a,b}
-i = A
-A = {B}
-W = {(A,a,B);(A,a,A);(A,b,A);(B,a,B);(B,b,A)}

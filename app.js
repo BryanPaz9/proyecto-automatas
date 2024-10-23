@@ -47,17 +47,21 @@ btnEjecutar.addEventListener('click', function () {
     const i = arri[1].trim();
     const A = await LIMPIARCOMA(ALINE);
     const W = await LIMPIARW(WLINE);
-    console.log(A,Q,Z);
-    //max_vector_row = Math.max(Q.length(),Z.length(),*/A.length);
-    console.log("Q:", Q);
-    console.log("Z:", Z);
-    console.log("i:", i);
-    agregarFilasVector(A,'tbodyA');
-    agregarFilasVector(Q,'tbodyQ');
-    agregarFilasVector(Z,'tbodyZ');
-    agregarAlfabeto(Z,'alfabeto');
-    console.log("W:", W);
-
+    // console.log(A,Q,Z);
+    let tA = A.length;
+    let tQ = Q.length;
+    let tZ = Z.length;
+    let max_vector_row = Math.max(tA,tQ,tZ);
+    // console.log(max_vector_row);
+    // console.log("Q:", Q);
+    // console.log("Z:", Z);
+    // console.log("i:", i);
+    agregarFilasVector(A,'tbodyA',max_vector_row);
+    agregarFilasVector(Q,'tbodyQ',max_vector_row);
+    agregarFilasVector(Z,'tbodyZ',max_vector_row);
+    agregarAlfabetoMatriz(Z,'alfabeto');
+    // console.log("W:", W);
+    imprimirMatriz(Q,Z,W);
   };
 
   lector.readAsText(archivo); 
@@ -67,10 +71,7 @@ btnEjecutar.addEventListener('click', function () {
 async function LIMPIARCOMA(str){
   const contenido = str.match(/\{([^}]*)\}/)[1];
   const arrayElementos = contenido.split(',');
-
-  // Mostrar el resultado
   return arrayElementos;
-
 }
 
 async function LIMPIARW(str) {
@@ -87,9 +88,8 @@ async function LIMPIARW(str) {
 }
 
 
-function agregarFilasVector(vector, tbodyV) {
-  // Obtener referencia al tbody
-  //console.log("A: "+A);
+function agregarFilasVector(vector, tbodyV,tvector) {
+  let rows = tvector;
   const tbody = document.getElementById(tbodyV);
   for (let i = 0; i < vector.length; i++) {
     let tr1 = document.createElement('tr');
@@ -98,12 +98,21 @@ function agregarFilasVector(vector, tbodyV) {
     th1.textContent = vector[i];
     tr1.appendChild(th1);
     tbody.appendChild(tr1);
+    rows--;
+  }
+  if(rows>0){
+    for (let i = 0; i < rows; i++) {
+      let tr1 = document.createElement('tr');
+      let th1 = document.createElement('th');
+      th1.setAttribute('scope', 'row');
+      th1.textContent = '\u00A0';
+      tr1.appendChild(th1);
+      tbody.appendChild(tr1);
+    }
   }
 }
 
-function agregarAlfabeto(alfabeto, trA) {
-  // Obtener referencia al tbody
-  //console.log("A: "+A);
+function agregarAlfabetoMatriz(alfabeto, trA) {
   const tr = document.getElementById(trA);
   for (let i = 0; i < alfabeto.length; i++) {
     let th1 = document.createElement('th');
@@ -111,7 +120,48 @@ function agregarAlfabeto(alfabeto, trA) {
     th1.setAttribute('class','table-active')
     th1.textContent = alfabeto[i];
     tr.appendChild(th1);
-    // tr.appendChild(tr1);
   }
 
+}
+
+
+function imprimirMatriz(estados,alfabeto,transiciones){
+  const tbody = document.getElementById('matrix');
+  for(let i = 0; i<estados.length;i++) {
+    let tr = document.createElement('tr');
+    tr.id = `row-${i}`;
+    let th1 = document.createElement('th');
+    th1.setAttribute('scope', 'row');
+    th1.textContent = estados[i];
+    tr.appendChild(th1);
+    console.log(estados[i]);
+    for (let j = 0; j < alfabeto.length; j++) {
+      console.log(alfabeto[j]);
+      let transition ='';
+      transiciones.forEach(e => {
+        let [current_status, element, next_status] = e.replace(/[()]/g, '').split(',');              
+        //console.log(current_status,element,next_status);
+        if(current_status == estados[i]){
+          if(alfabeto[j] == element){
+            transition+=next_status;
+          }
+        }
+      });
+      if(transition != ''){
+        let jointransition = transition.split('').sort().join(',');
+        console.log("Transición"+estados[i]+", "+alfabeto[j]+": "+jointransition);
+        let th1 = document.createElement('th');
+        th1.setAttribute('scope', 'row');
+        th1.textContent = jointransition;
+        tr.appendChild(th1);
+      }else{
+        console.log("Transición"+estados[i]+", "+alfabeto[j]+": Espacio vacío");        
+        let th1 = document.createElement('th');
+        th1.setAttribute('scope', 'row');
+        th1.textContent = '\u00A0';
+        tr.appendChild(th1);
+      }
+    }
+    tbody.appendChild(tr);
+  }
 }
