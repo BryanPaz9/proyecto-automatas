@@ -25,8 +25,22 @@ inputArchivo.addEventListener('change', function() {
     if (extension === 'txt') {
       btnEjecutar.disabled = false;
     } else {
-      alert('El formato del archivo no es compatible con esta función. Solo se aceptan archivos .txt.');
-      window.location.reload(); 
+      //alert('El formato del archivo no es compatible con esta función. Solo se aceptan archivos .txt.');
+      Swal.fire({
+        title: 'Error!',
+        html: 'El formato del archivo no es compatible con esta función. Solo se aceptan archivos .txt.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+        customClass: {
+            confirmButton: 'custom-confirm-button' 
+        }
+      }).then((res)=>{
+        if(res.isConfirmed){
+          window.location.reload();  
+        }else{
+          window.location.reload();  
+        }
+      });
     }
   }
 });
@@ -89,46 +103,83 @@ btnEjecutar.addEventListener('click', function () {
               matrizTransicion.style.display='block';
               document.getElementById('carga-archivo-form').style.display = 'none';
             }else{
-              alert('Problema con el formato de entrada de W\n\n'+
-                'Cadena encontrada: '+WLINE+
-                '\nFormato aceptable: w={(A,a,B);(A,a,A);(A,b,A);(B,a,B);(B,b,A)}'
-              );
+              Swal.fire({
+                title: 'Error!',
+                html: 'Problema con el formato de entrada de w<br><br>' +
+                      'Cadena encontrada: ' + WLINE + '<br>' +
+                      'Formato aceptable: w={(A,a,B);(A,a,A);(A,b,A);(B,a,B);(B,b,A)}',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+                customClass: {
+                    confirmButton: 'custom-confirm-button' 
+                }
+              });
               txt.style.display='block';
               btnReset.style.display ='block';
               btnEjecutar.style.display='none';
             }
           }else{
-            alert('Problema con el formato de entrada de A\n\n'+
-              'Cadena encontrada: '+ALINE+
-              '\nFormato aceptable: A = {A,B}'
-            );
+
+            Swal.fire({
+              title: 'Error!',
+              html: 'Problema con el formato de entrada de A<br><br>' +
+                    'Cadena encontrada: ' + ALINE + '<br>' +
+                    'Formato aceptable: A = {A,B}',
+              icon: 'error',
+              confirmButtonText: 'Ok',
+              customClass: {
+                  confirmButton: 'custom-confirm-button' 
+              }
+            });
             txt.style.display='block';
             btnReset.style.display ='block';
             btnEjecutar.style.display='none';
           }
         }else{
-          alert('Problema con el formato de entrada de I\n\n'+
-            'Cadena encontrada: '+iLINE+
-            '\nFormato aceptable: i = A'
-          );
+          Swal.fire({
+            title: 'Error!',
+            html: 'Problema con el formato de entrada de i<br><br>' +
+                  'Cadena encontrada: ' + iLINE + '<br>' +
+                  'Formato aceptable: i = A',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+            customClass: {
+                confirmButton: 'custom-confirm-button' 
+            }
+          });
           txt.style.display='block';
           btnReset.style.display ='block';
           btnEjecutar.style.display='none';
         }
       }else{
-        alert('Problema con el formato de entrada de Z\n\n'+
-          'Cadena encontrada: '+ZLINE+
-          '\nFormato aceptable: Z={a,b}'
-        );
+        Swal.fire({
+          title: 'Error!',
+          html: 'Problema con el formato de entrada de Z<br><br>' +
+                'Cadena encontrada: ' + ZLINE + '<br>' +
+                'Formato aceptable: Z={a,b}',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+          customClass: {
+              confirmButton: 'custom-confirm-button' 
+          }
+        });
         txt.style.display='block';
         btnReset.style.display ='block';
         btnEjecutar.style.display='none';
       }
     }else{
-      alert('Problema con el formato de entrada de Q\n\n'+
-        'Cadena encontrada: '+QLINE+
-        '\nFormato aceptable: Q={A,B}'
-      );
+      Swal.fire({
+        title: 'Error!',
+        html: 'Problema con el formato de entrada de Q<br><br>' +
+              'Cadena encontrada: ' + QLINE + '<br>' +
+              'Formato aceptable: Q={A,B}',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+        customClass: {
+            confirmButton: 'custom-confirm-button' 
+        }
+      });
+      
       txt.style.display='block';
       btnReset.style.display ='block';
       btnEjecutar.style.display='none';
@@ -240,7 +291,15 @@ async function imprimirMatriz(estados,alfabeto,transiciones){
     tbody.appendChild(tr);
   }
   if(errorTransicion>0){
-    alert("Hay estados de transición que no coinciden con elementos del alfabeto o los estados");
+    Swal.fire({
+      title: 'Error!',
+      html: 'Hay estados de transición que no coinciden con elementos del alfabeto o la definición de estados<br><br>',      
+      icon: 'error',
+      confirmButtonText: 'Ok',
+      customClass: {
+          confirmButton: 'custom-confirm-button' 
+      }
+    });
     return 'error';
   }
   return 'ok'
