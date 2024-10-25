@@ -47,33 +47,95 @@ btnEjecutar.addEventListener('click', function () {
     const ALINE = lines[3];
     const WLINE = lines[4];
 
-    const Q = await LIMPIARCOMA(QLINE);
-    const Z = await LIMPIARCOMA(ZLINE);
-    const arri = iLINE.split('=');
-    const i = arri[1].trim();
-    const A = await LIMPIARCOMA(ALINE);
-    const W = await LIMPIARW(WLINE);
-    // console.log(A,Q,Z);
-    let tA = A.length;
-    let tQ = Q.length;
-    let tZ = Z.length;
-    let max_vector_row = Math.max(tA,tQ,tZ);
-    agregarFilasVector(A,'tbodyA',max_vector_row);
-    agregarFilasVector(Q,'tbodyQ',max_vector_row);
-    agregarFilasVector(Z,'tbodyZ',max_vector_row);
-    agregarAlfabetoMatriz(Z,'alfabeto');
-    // console.log("W:", W);
-    imprimirMatriz(Q,Z,W);
-    vectorA.style.display='block';
-    vectorQ.style.display='block';
-    vectorE.style.display='block';
-    txt.style.display='block';
-    btnReset.style.display='block';
-    matrizTransicion.style.display='block';
+    let vQ = await validaQ(QLINE);
+    let vZ = await validaZ(ZLINE);
+    let vI = await validaI(iLINE);
+    let vA = await validaA(ALINE);
+    let vW = await validaW(WLINE);
+
+    if(vQ){
+      if(vZ){
+        if(vI){
+          if(vA){
+            if(vW){
+              const Q = await LIMPIARCOMA(QLINE);
+              const Z = await LIMPIARCOMA(ZLINE);
+              const arri = iLINE.split('=');
+              const i = arri[1].trim();
+              const A = await LIMPIARCOMA(ALINE);
+              const W = await LIMPIARW(WLINE);
+              // console.log(A,Q,Z);
+              let tA = A.length;
+              let tQ = Q.length;
+              let tZ = Z.length;
+              let max_vector_row = Math.max(tA,tQ,tZ);
+              agregarFilasVector(A,'tbodyA',max_vector_row);
+              agregarFilasVector(Q,'tbodyQ',max_vector_row);
+              agregarFilasVector(Z,'tbodyZ',max_vector_row);
+              agregarAlfabetoMatriz(Z,'alfabeto');
+              // console.log("W:", W);
+              let errmat = await imprimirMatriz(Q,Z,W);
+              if(errmat == 'error'){
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;
+              }
+              vectorA.style.display='block';
+              vectorQ.style.display='block';
+              vectorE.style.display='block';
+              txt.style.display='block';
+              btnReset.style.display='block';
+              matrizTransicion.style.display='block';
+              document.getElementById('carga-archivo-form').style.display = 'none';
+            }else{
+              alert('Problema con el formato de entrada de W\n\n'+
+                'Cadena encontrada: '+WLINE+
+                '\nFormato aceptable: w={(A,a,B);(A,a,A);(A,b,A);(B,a,B);(B,b,A)}'
+              );
+              txt.style.display='block';
+              btnReset.style.display ='block';
+              btnEjecutar.style.display='none';
+            }
+          }else{
+            alert('Problema con el formato de entrada de A\n\n'+
+              'Cadena encontrada: '+ALINE+
+              '\nFormato aceptable: A = {A,B}'
+            );
+            txt.style.display='block';
+            btnReset.style.display ='block';
+            btnEjecutar.style.display='none';
+          }
+        }else{
+          alert('Problema con el formato de entrada de I\n\n'+
+            'Cadena encontrada: '+iLINE+
+            '\nFormato aceptable: i = A'
+          );
+          txt.style.display='block';
+          btnReset.style.display ='block';
+          btnEjecutar.style.display='none';
+        }
+      }else{
+        alert('Problema con el formato de entrada de Z\n\n'+
+          'Cadena encontrada: '+ZLINE+
+          '\nFormato aceptable: Z={a,b}'
+        );
+        txt.style.display='block';
+        btnReset.style.display ='block';
+        btnEjecutar.style.display='none';
+      }
+    }else{
+      alert('Problema con el formato de entrada de Q\n\n'+
+        'Cadena encontrada: '+QLINE+
+        '\nFormato aceptable: Q={A,B}'
+      );
+      txt.style.display='block';
+      btnReset.style.display ='block';
+      btnEjecutar.style.display='none';
+    }
   };
 
   lector.readAsText(archivo); 
-  document.getElementById('carga-archivo-form').style.display = 'none';
 });
 
 async function LIMPIARCOMA(str){
@@ -133,7 +195,8 @@ function agregarAlfabetoMatriz(alfabeto, trA) {
 }
 
 
-function imprimirMatriz(estados,alfabeto,transiciones){
+async function imprimirMatriz(estados,alfabeto,transiciones){
+  let errorTransicion= 0;
   const tbody = document.getElementById('matrix');
   for(let i = 0; i<estados.length;i++) {
     let tr = document.createElement('tr');
@@ -142,13 +205,19 @@ function imprimirMatriz(estados,alfabeto,transiciones){
     th1.setAttribute('scope', 'row');
     th1.textContent = estados[i];
     tr.appendChild(th1);
-    //console.log(estados[i]);
     for (let j = 0; j < alfabeto.length; j++) {
-      //console.log(alfabeto[j]);
       let transition ='';
       transiciones.forEach(e => {
-        let [current_status, element, next_status] = e.replace(/[()]/g, '').split(',');              
-        //console.log(current_status,element,next_status);
+        let [current_status, element, next_status] = e.replace(/[()]/g, '').split(',');
+        let exist_current_status = estados.some(e => e.includes(current_status));
+        let exist_element = alfabeto.some(e => e.includes(element));
+        let exist_next_status = estados.some(e => e.includes(next_status));
+        
+        if (!exist_current_status || !exist_element || !exist_next_status) {
+          errorTransicion++;
+          return; // Salir del método actual
+        }
+        
         if(current_status == estados[i]){
           if(alfabeto[j] == element){
             transition+=next_status;
@@ -157,13 +226,11 @@ function imprimirMatriz(estados,alfabeto,transiciones){
       });
       if(transition != ''){
         let jointransition = transition.split('').sort().join(',');
-        //console.log("Transición"+estados[i]+", "+alfabeto[j]+": "+jointransition);
         let th1 = document.createElement('th');
         th1.setAttribute('scope', 'row');
         th1.textContent = jointransition;
         tr.appendChild(th1);
       }else{
-        //console.log("Transición"+estados[i]+", "+alfabeto[j]+": Espacio vacío");        
         let th1 = document.createElement('th');
         th1.setAttribute('scope', 'row');
         th1.textContent = '\u00A0';
@@ -172,4 +239,35 @@ function imprimirMatriz(estados,alfabeto,transiciones){
     }
     tbody.appendChild(tr);
   }
+  if(errorTransicion>0){
+    alert("Hay estados de transición que no coinciden con elementos del alfabeto o los estados");
+    return 'error';
+  }
+  return 'ok'
+}
+
+async function validaA(strA){
+  const regex = /^A\s*=\s*\{([A-Z0-9]+(,[A-Z0-9]+)*)\}$/;
+  return regex.test(strA);
+}
+
+async function validaQ(strQ){
+  const regex = /^Q\s*=\s*\{([A-Z0-9]+(,[A-Z0-9]+)*)\}$/;
+  return regex.test(strQ)
+}
+
+async function validaZ(strZ){
+  const regex = /^Z\s*=\s*\{([^\s,{}]+(,[^\s,{}]+)*)\}$/;
+  return regex.test(strZ);
+}
+
+async function validaI(strI){
+  const regex = /^i\s*=\s*[A-Z0-9]$/;
+  return regex.test(strI);
+}
+
+async function validaW(strW){
+  const regex = /^w\s*=\s*\{(\([A-Z],[a-z0-9]+,[A-Z]\)(;\([A-Z],[a-z0-9]+,[A-Z]\))*)\}$/;
+  return regex.test(strW);
+
 }
