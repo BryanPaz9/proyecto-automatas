@@ -76,7 +76,38 @@ btnEjecutar.addEventListener('click', function () {
               const Z = await LIMPIARCOMA(ZLINE);
               const arri = iLINE.split('=');
               const i = arri[1].trim();
+              if(!Q.some(e => e.includes(i))){
+                Swal.fire({
+                  title: 'Error!',
+                  html: 'El estado inicial no es ninguno de los estados definidos en Q<br><br>',      
+                  icon: 'error',
+                  confirmButtonText: 'Ok',
+                  customClass: {
+                      confirmButton: 'custom-confirm-button' 
+                  }
+                });
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;
+              }
               const A = await LIMPIARCOMA(ALINE);
+              let verificaAEnQ = await validarElementosQ(Q,A);
+              if(!verificaAEnQ){
+                Swal.fire({
+                  title: 'Error!',
+                  html: 'Alguno de los estados de aceptación no se encuentra definido en los estados Q<br><br>',      
+                  icon: 'error',
+                  confirmButtonText: 'Ok',
+                  customClass: {
+                      confirmButton: 'custom-confirm-button' 
+                  }
+                });
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;                
+              }
               const W = await LIMPIARW(WLINE);
               // console.log(A,Q,Z);
               let tA = A.length;
@@ -329,4 +360,13 @@ async function validaW(strW){
   const regex = /^w\s*=\s*\{(\([A-Z],[a-z0-9]+,[A-Z]\)(;\([A-Z],[a-z0-9]+,[A-Z]\))*)\}$/;
   return regex.test(strW);
 
+}
+
+async function validarElementosQ(Q, A) {
+  for (let elemento of A) {
+      if (!Q.includes(elemento)) {
+          return false;
+      }
+  }
+  return true;
 }
