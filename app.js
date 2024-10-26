@@ -71,9 +71,12 @@ btnEjecutar.addEventListener('click', function () {
         if(vI){
           if(vA){
             if(vW){
+              // Se define el vector de estados
               const Q = await LIMPIARCOMA(QLINE);
+              // Se define el vector del alfabeto
               const Z = await LIMPIARCOMA(ZLINE);
               const arri = iLINE.split('=');
+              // Se define el vector de estado inicial
               const i = arri[1].trim();
               if(!Q.some(e => e.includes(i))){
                 Swal.fire({
@@ -407,9 +410,7 @@ async function validaI(strI){
 }
 
 async function validaW(strW){
-  //const regex = /^w\s*=\s*\{(\([A-Z],[a-z0-9]+,[A-Z]\)(;\([A-Z],[a-z0-9]+,[A-Z]\))*)\}$/;
   const regex = /^w\s*=\s*\{(\((\d+|[A-Z]),[a-z0-9]+,(\d+|[A-Z])\)(;\((\d+|[A-Z]),[a-z0-9]+,(\d+|[A-Z])\))*)\}$/;
-  // const regex = /^w\s*=\s*\{(\(\d+,[a-z0-9]+,\d+\)(;\(\d+,[a-z0-9]+,\d+\))*)\}$/;
 
 
   return regex.test(strW);
