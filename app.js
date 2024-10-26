@@ -13,7 +13,7 @@ const btnReset = document.getElementById('reset');
 const matrizTransicion = document.getElementById('matriz');
 let title = '';
 
-// Detecta si se selecciona un archivo
+
 inputArchivo.addEventListener('change', function() {
   const archivo = inputArchivo.files[0]; 
 
@@ -25,7 +25,6 @@ inputArchivo.addEventListener('change', function() {
     if (extension === 'txt') {
       btnEjecutar.disabled = false;
     } else {
-      //alert('El formato del archivo no es compatible con esta función. Solo se aceptan archivos .txt.');
       Swal.fire({
         title: 'Error!',
         html: 'El formato del archivo no es compatible con esta función. Solo se aceptan archivos .txt.',
@@ -91,8 +90,59 @@ btnEjecutar.addEventListener('click', function () {
                 btnEjecutar.style.display='none';
                 return;
               }
+              const duplicidadQ = await arrDuplicidad(Q);
+              const duplicidadZ = await arrDuplicidad(Z);
+
+              if(duplicidadQ){
+                Swal.fire({
+                  title: 'Error!',
+                  html: 'Existen uno o mas estados duplicados en Q<br><br>',      
+                  icon: 'error',
+                  confirmButtonText: 'Ok',
+                  customClass: {
+                      confirmButton: 'custom-confirm-button' 
+                  }
+                });
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;
+              }
+              if(duplicidadZ){
+                Swal.fire({
+                  title: 'Error!',
+                  html: 'Existen uno o más elementos del alfabeto duplicados<br><br>',      
+                  icon: 'error',
+                  confirmButtonText: 'Ok',
+                  customClass: {
+                      confirmButton: 'custom-confirm-button' 
+                  }
+                });
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;
+              }
               const A = await LIMPIARCOMA(ALINE);
               let verificaAEnQ = await validarElementosQ(Q,A);
+              
+              const duplicidadA = await arrDuplicidad(A);
+              if(duplicidadA){
+                Swal.fire({
+                  title: 'Error!',
+                  html: 'Existen uno o mas estados de aceptación duplicados<br><br>',      
+                  icon: 'error',
+                  confirmButtonText: 'Ok',
+                  customClass: {
+                      confirmButton: 'custom-confirm-button' 
+                  }
+                });
+                txt.style.display='block';
+                btnReset.style.display ='block';
+                btnEjecutar.style.display='none';
+                return;
+              }
+
               if(!verificaAEnQ){
                 Swal.fire({
                   title: 'Error!',
@@ -357,7 +407,11 @@ async function validaI(strI){
 }
 
 async function validaW(strW){
-  const regex = /^w\s*=\s*\{(\([A-Z],[a-z0-9]+,[A-Z]\)(;\([A-Z],[a-z0-9]+,[A-Z]\))*)\}$/;
+  //const regex = /^w\s*=\s*\{(\([A-Z],[a-z0-9]+,[A-Z]\)(;\([A-Z],[a-z0-9]+,[A-Z]\))*)\}$/;
+  const regex = /^w\s*=\s*\{(\((\d+|[A-Z]),[a-z0-9]+,(\d+|[A-Z])\)(;\((\d+|[A-Z]),[a-z0-9]+,(\d+|[A-Z])\))*)\}$/;
+  // const regex = /^w\s*=\s*\{(\(\d+,[a-z0-9]+,\d+\)(;\(\d+,[a-z0-9]+,\d+\))*)\}$/;
+
+
   return regex.test(strW);
 
 }
@@ -369,4 +423,9 @@ async function validarElementosQ(Q, A) {
       }
   }
   return true;
+}
+
+
+async function arrDuplicidad(arr) {
+  return new Set(arr).size !== arr.length;
 }
